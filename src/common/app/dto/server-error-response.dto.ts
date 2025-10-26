@@ -1,7 +1,7 @@
 export class ServerErrorResponseDto {
   statusCode: number;
   message: string;
-  success: false; 
+  success: false;
   cause?: string;
   errorValidations?: Array<{ field: any; message: unknown }>;
   timestamp: string;

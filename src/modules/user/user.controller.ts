@@ -6,37 +6,61 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  HttpCode,
+  HttpStatus,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { QueryUserDto } from './dto/query-user.dto';
+import { plainToInstance } from 'class-transformer'; 
+import { ResponseUserDto } from './dto/response-user.dto';
+import { Request } from 'express';
+import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ServerPaginatedResponseDto } from '../../common/app/dto/server-response.dto';
 
-@Controller({ path: 'users', version: '1' })
+@UseGuards(AccessTokenGuard)
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
   @Get()
-  findAll() {
-    return this.userService.findUsers();
+  @HttpCode(HttpStatus.OK)
+  async getUsers(
+    @Query() query: QueryUserDto,
+  ): Promise<ServerPaginatedResponseDto<ResponseUserDto>> {
+    const { meta, data } = await this.userService.findUsers(query);
+    const transformedData = plainToInstance(ResponseUserDto, data, {
+      excludeExtraneousValues: true,
+    });
+    return {
+      message: 'Users retrieved successfully',
+      data: transformedData,
+      meta,
+    };
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  async getMe(@Req() request: Request): Promise<ResponseUserDto> {
+    const user = await this.userService.findUserById(request.user.id);
+    const response = plainToInstance(ResponseUserDto, user, {
+      excludeExtraneousValues: true,
+    });
+    return response;
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Patch('me')
+  @HttpCode(HttpStatus.CREATED)
+  async updateUserById(
+    @Req() request: Request,
+    @Body() body: UpdateUserDto,
+  ): Promise<ResponseUserDto> {
+    const id = request.user.id;
+    const user = await this.userService.updateUserById(id, body);
+    const response = plainToInstance(ResponseUserDto, user, {
+      excludeExtraneousValues: true,
+    });
+    return response;
   }
 }

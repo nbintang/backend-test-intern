@@ -1,34 +1,77 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Res,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { ResponseUserDto } from '../user/dto/response-user.dto';
+import { plainToInstance } from 'class-transformer';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { CookieOptions, Request, Response } from 'express';
+import { RefreshTokenGuard } from './guards/refresh-token.guard'; 
+import { ServerResponseDto } from '../../common/app/dto/server-response.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  private isDevelopment = process.env.NODE_ENV === 'development';
+  private get getCookieOptions(): CookieOptions {
+    return {
+      sameSite: this.isDevelopment ? 'lax' : 'none',
+      secure: !this.isDevelopment,
+      httpOnly: true,
+    };
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body() body: RegisterDto): Promise<ResponseUserDto> {
+    const user = await this.authService.register(body);
+    const response = plainToInstance(ResponseUserDto, user, {
+      excludeExtraneousValues: true,
+    });
+    return response;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { accessToken, refreshToken } = await this.authService.login(body);
+    if (accessToken && refreshToken) {
+      response.cookie('refreshToken', refreshToken, this.getCookieOptions);
+    }
+    return { accessToken, refreshToken };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
+  @Delete('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(
+    @Req() request: Request,
+  ): Promise<ServerResponseDto> {
+    request.res.clearCookie('refreshToken', this.getCookieOptions);
+    return { success: true, message: 'Logout successfully' };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @UseGuards(RefreshTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh-token')
+  async refreshToken(
+    @Req() request: Request,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const userId = request.user.id;
+    return await this.authService.refreshToken(userId);
   }
 }

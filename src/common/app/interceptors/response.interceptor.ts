@@ -8,7 +8,10 @@ import {
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { ServerResponseDto } from '../dto/server-response.dto';
+import {
+  ServerPaginatedResponseDto,
+  ServerResponseDto,
+} from '../dto/server-response.dto';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
@@ -23,42 +26,56 @@ export class ResponseInterceptor implements NestInterceptor {
     const start = Date.now();
 
     return next.handle().pipe(
-      map((result): ServerResponseDto => {
+      map((result: any): ServerResponseDto | ServerPaginatedResponseDto => {
         const res = ctx.switchToHttp().getResponse();
-        const statusCode = res.statusCode;
+        const statusCode = res.statusCode ?? 200;
 
-        const baseResponse: ServerResponseDto = {
-          statusCode: (result as any)?.statusCode ?? statusCode,
-          success: (result as any)?.success ?? true,
-          message: (result as any)?.message ?? 'Success',
-          meta: (result as any)?.meta ?? undefined,
+        if (
+          result &&
+          typeof result === 'object' &&
+          ('data' in result || 'meta' in result || 'message' in result)
+        ) {
+          this.logger.log(
+            'info',
+            JSON.stringify({
+              method,
+              url,
+              statusCode,
+              durationMs: `${Date.now() - start}ms`,
+              message: result.message ?? 'Success',
+              hasMeta: Boolean(result.meta),
+              hasData: Boolean(result.data),
+            }),
+          );
+
+          return {
+            statusCode: result.statusCode ?? statusCode,
+            success: result.success ?? true,
+            message: result.message ?? 'Success',
+            ...result,
+          };
+        }
+        const response: ServerResponseDto = {
+          statusCode,
+          success: true,
+          message: 'Success',
+          data: result,
         };
 
-        const isObject = result !== null && typeof result === 'object';
-
-        let data: any;
-        if (isObject && 'data' in result) {
-          data = (result as any).data;
-        } else if (Array.isArray(result)) {
-          data = result;
-        } else if (!isObject && result !== undefined) {
-          data = result;
-        }
-
-        const elapsed = Date.now() - start;
         this.logger.log(
           'info',
           JSON.stringify({
             method,
             url,
-            statusCode: baseResponse.statusCode,
-            durationMs: `${elapsed}ms`,
-            message: baseResponse.message,
-            hasData: Boolean(data),
+            statusCode,
+            durationMs: `${Date.now() - start}ms`,
+            message: response.message,
+            hasMeta: false,
+            hasData: Boolean(result),
           }),
         );
 
-        return data !== undefined ? { ...baseResponse, data } : baseResponse;
+        return response;
       }),
     );
   }

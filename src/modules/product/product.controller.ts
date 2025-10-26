@@ -1,34 +1,81 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-
-@Controller('product')
+import { AccessTokenGuard } from '../auth/guards/access-token.guard';
+import { QueryProductDto } from './dto/query-product.dto';
+import { ResponseProductDto } from './dto/response-product.dto';
+import { plainToInstance } from 'class-transformer';
+import { ServerPaginatedResponseDto, ServerResponseDto } from '../../common/app/dto/server-response.dto';
+@UseGuards(AccessTokenGuard)
+@Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
-
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  @HttpCode(HttpStatus.CREATED)
+  async createProduct(
+    @Body() createProductDto: CreateProductDto,
+  ): Promise<ResponseProductDto> {
+    const product = await this.productService.createProduct(createProductDto);
+    const transformedData = plainToInstance(ResponseProductDto, product, {
+      excludeExtraneousValues: true,
+    });
+    return transformedData;
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  @HttpCode(HttpStatus.OK)
+  async getProducts(
+    @Query() query: QueryProductDto,
+  ): Promise<ServerPaginatedResponseDto<ResponseProductDto>> {
+    const { data: products, meta } =
+      await this.productService.findProducts(query);
+    const transformedData = plainToInstance(ResponseProductDto, products, {
+      excludeExtraneousValues: true,
+    });
+    return {
+      message: 'Products retrieved successfully',
+      data: transformedData,
+      meta,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  @HttpCode(HttpStatus.OK)
+  async getProductById(@Param('id') id: string): Promise<ResponseProductDto> {
+    const product = await this.productService.findProductById(+id);
+    const transformedData = plainToInstance(ResponseProductDto, product, {
+      excludeExtraneousValues: true,
+    });
+    return transformedData;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  async updateProductById(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<ResponseProductDto> {
+    const product = await this.productService.updateProductById(+id, updateProductDto);
+    const transformedData = plainToInstance(ResponseProductDto, product, {
+      excludeExtraneousValues: true,
+    });
+    return transformedData;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  async deleteProductById(@Param('id') id: string): Promise<ServerResponseDto> {
+    return await this.productService.deleteProductById(+id);
   }
 }
