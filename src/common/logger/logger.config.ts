@@ -1,7 +1,7 @@
 import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
 import { WinstonModuleOptions } from 'nest-winston';
-import * as winston from 'winston';
-import * as path from 'path';
+import  winston from 'winston';
+import  path from 'path';
 const logDir = 'logs';
 const isServerless = process.env.NODE_ENV === 'production';
 

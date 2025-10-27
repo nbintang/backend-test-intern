@@ -21,7 +21,7 @@ import {
   ServerResponseDto,
 } from '../../../common/app/dto/server-response.dto';
 
-@Controller('categories')
+@Controller('protected/categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 

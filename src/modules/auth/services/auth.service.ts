@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 
 import { RegisterDto } from '../dto/register.dto'; 
-import * as argon from 'argon2';
+import  argon from 'argon2';
 import { MerchantPayload } from '../interfaces/user-jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt'; 
 import { LoginDto } from '../dto/login.dto'; 

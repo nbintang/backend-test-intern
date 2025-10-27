@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import  z from 'zod';
 
 export const appConfigSchema = z.object({
   PORT: z.string().regex(/^\d+$/).default('3000'),

@@ -24,7 +24,7 @@ import { ServerPaginatedResponseDto } from '../../../common/app/dto/server-respo
 import { ServerResponseDto } from '../../../common/app/dto/server-response.dto';
 
 @UseGuards(AccessTokenGuard)
-@Controller('orders')
+@Controller('protected/orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 

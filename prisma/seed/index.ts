@@ -1,6 +1,6 @@
 // prisma/seed/index.ts
 import { PrismaClient, OrderStatus } from '@prisma/client';
-import * as argon from 'argon2';
+import  argon from 'argon2';
 
 const prisma = new PrismaClient();
 

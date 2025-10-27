@@ -26,7 +26,7 @@ import {
 } from '../../../common/app/dto/server-response.dto';
 import { Request } from 'express';
 @UseGuards(AccessTokenGuard)
-@Controller('products')
+@Controller('protected/products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
   @Post()

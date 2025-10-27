@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { CustomValidationPipe } from './common/app/pipes/custom-validation.pipe';
 import { HttpExceptionFilter } from './common/app/exceptions/http-exception-filter';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';

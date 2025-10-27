@@ -22,7 +22,7 @@ import { UpdateMerchantDto } from '../dto/requests/update-merchant.dto';
 import { ServerPaginatedResponseDto } from '../../../common/app/dto/server-response.dto';
 
 @UseGuards(AccessTokenGuard)
-@Controller('merchants')
+@Controller('protected/merchants')
 export class MerchantController {
   constructor(private readonly merchantService: MerchantService) {}
   @Get()
