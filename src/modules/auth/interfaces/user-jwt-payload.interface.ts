@@ -1,10 +1,10 @@
  
-export interface UserPayload {
+export interface MerchantPayload {
   id: number;  
   email: string;
 }
 
-export interface UserJwtPayload extends UserPayload {
+export interface MerchantJwtPayload extends MerchantPayload {
   iat: number;
   exp: number;
 }

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './modules/user/user.module';
+import { MerchantModule } from './modules/merchant/merchant.module';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { ProductModule } from './modules/product/product.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -16,7 +16,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
   imports: [
     AppConfigModule,
     AuthConfigModule,
-    UserModule,
+    MerchantModule,
     PrismaModule,
     ProductModule,
     AuthModule,

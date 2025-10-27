@@ -5,13 +5,15 @@ import * as argon from 'argon2';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🔄 Cleaning database (orders -> products -> categories -> users)...');
+  console.log(
+    '🔄 Cleaning database (orders -> products -> categories -> users)...',
+  );
 
   // Hapus dalam urutan yang aman (orders terlebih dahulu)
   await prisma.order.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
-  await prisma.user.deleteMany();
+  await prisma.merchant.deleteMany();
 
   console.log('🌱 Seeding database...');
 
@@ -19,100 +21,111 @@ async function main() {
   const passwordHash = await argon.hash('password123');
 
   // 1) Users
-  const user = await prisma.user.create({
+  const merchant = await prisma.merchant.create({
     data: {
-      email: 'admin@example.com',
+      email: 'merchant@example.com',
       password: passwordHash,
-      fullName: 'Admin User',
+      fullName: 'Barista',
       phoneNumber: '+6281234567890',
       address: 'Jakarta, Indonesia',
     },
   });
 
- 
-
- 
-
-  console.log('✅ Created users:', [user.email].join(', '));
+  console.log('✅ Created users:', [merchant.email].join(', '));
 
   // 2) Categories
-  const computersCat = await prisma.category.create({
-    data: { name: 'Computers' },
+  const coffeeCat = await prisma.category.create({
+    data: { name: 'Americano' },
   });
-  const accessoriesCat = await prisma.category.create({
-    data: { name: 'Accessories' },
+  const coffeeCat2 = await prisma.category.create({
+    data: { name: 'Expresso' },
   });
-  const peripheralsCat = await prisma.category.create({
-    data: { name: 'Peripherals' },
+  const coffeeCat3 = await prisma.category.create({
+    data: { name: 'Latte' },
   });
 
-  console.log('✅ Created categories:', [computersCat.name, accessoriesCat.name, peripheralsCat.name].join(', '));
+  console.log(
+    '✅ Created categories:',
+    [coffeeCat.name, coffeeCat2.name, coffeeCat3.name].join(', '),
+  );
 
   // 3) Products (assign categoryId)
-  const laptop = await prisma.product.create({
+  const coffee1 = await prisma.product.create({
     data: {
-      name: 'Laptop Lenovo ThinkPad',
-      description: 'Powerful laptop for professionals',
+      merchantId: merchant.id,
+      name: 'Americano Coffee',
+      description: 'Americano coffee with milk',
       price: 15000000,
       stock: 10,
-      categoryId: computersCat.id,
+      categoryId: coffeeCat.id,
     },
   });
 
-  const keyboard = await prisma.product.create({
+  const coffee2 = await prisma.product.create({
     data: {
-      name: 'Mechanical Keyboard Keychron K6',
-      description: 'Wireless mechanical keyboard with RGB',
+      merchantId: merchant.id,
+      name: 'Expresso Coffee',
+      description: 'Expresso coffee with milk',
       price: 1300000,
       stock: 20,
-      categoryId: accessoriesCat.id,
+      categoryId: coffeeCat2.id,
     },
   });
 
-  const mouse = await prisma.product.create({
+  const coffee3 = await prisma.product.create({
     data: {
-      name: 'Wireless Mouse Logitech MX Master 3',
-      description: 'Ergonomic mouse for productivity',
+      merchantId: merchant.id,
+      name: 'Latte Coffee',
+      description: 'Latte coffee with milk',
       price: 1500000,
       stock: 15,
-      categoryId: peripheralsCat.id,
+      categoryId: coffeeCat3.id,
     },
   });
 
-  console.log('✅ Created products:', [laptop.name, keyboard.name, mouse.name].join(', '));
+  console.log(
+    '✅ Created products:',
+    [coffee1.name, coffee2.name, coffee3.name].join(', '),
+  );
 
   // 4) Orders (userId & productId must exist)
   const order1 = await prisma.order.create({
     data: {
-      userId: user.id,
-      productId: laptop.id,
+      customerName: 'John Doe',
+      merchantId: merchant.id,
+      productId: coffee1.id,
       quantity: 1,
-      totalAmount: laptop.price * 1,
+      totalAmount: coffee1.price * 1,
       status: OrderStatus.PENDING,
     },
   });
 
   const order2 = await prisma.order.create({
     data: {
-      userId: user.id,
-      productId: keyboard.id,
+      customerName: 'John Doe',
+      merchantId: merchant.id,
+      productId: coffee2.id,
       quantity: 2,
-      totalAmount: keyboard.price * 2,
+      totalAmount: coffee2.price * 2,
       status: OrderStatus.COMPLETED,
     },
   });
 
   const order3 = await prisma.order.create({
     data: {
-      userId: user.id,
-      productId: mouse.id,
+      customerName: 'John Doe',
+      merchantId: merchant.id,
+      productId: coffee3.id,
       quantity: 1,
-      totalAmount: mouse.price * 1,
+      totalAmount: coffee3.price * 1,
       status: OrderStatus.PENDING,
     },
   });
 
-  console.log('✅ Created orders:', [order1.id, order2.id, order3.id].join(', '));
+  console.log(
+    '✅ Created orders:',
+    [order1.id, order2.id, order3.id].join(', '),
+  );
   console.log('🌿 Seeding completed successfully!');
 }
 

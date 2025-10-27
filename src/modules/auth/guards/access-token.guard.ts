@@ -9,12 +9,12 @@ import { AuthGuard } from '@nestjs/passport';
 export class AccessTokenGuard extends AuthGuard('jwt') {
   handleRequest<TUser = any>(
     err: any,
-    user: any,
+    merchant: any,
     info: any,
     context: ExecutionContext,
     status?: any,
   ): TUser {
-    if (err || !user) throw new UnauthorizedException('Please login first!');
-    return user;
+    if (err || !merchant) throw new UnauthorizedException('Please login first!');
+    return merchant;
   }
 }
