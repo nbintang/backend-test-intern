@@ -9,6 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoriesService } from '../services/categories.service';
 import { CreateCategoryDto } from '../dto/requests/create-category.dto';
@@ -20,7 +21,9 @@ import {
   ServerPaginatedResponseDto,
   ServerResponseDto,
 } from '../../../common/app/dto/server-response.dto';
+import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
 
+@UseGuards(AccessTokenGuard)
 @Controller('protected/categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}

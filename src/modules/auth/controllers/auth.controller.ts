@@ -56,14 +56,13 @@ export class AuthController {
     return { accessToken, refreshToken };
   }
 
-  @Delete('logout')
-  @HttpCode(HttpStatus.OK)
-  async logout(
-    @Req() request: Request,
-  ): Promise<ServerResponseDto> {
-    request.res.clearCookie('refreshToken', this.cookieOptions);
-    return { success: true, message: 'Logout successfully' };
-  }
+@Delete('logout')
+@HttpCode(HttpStatus.OK)
+async logout(@Res({ passthrough: true }) response: Response): Promise<ServerResponseDto> {
+  response.clearCookie('refreshToken', this.cookieOptions);
+  return { success: true, message: 'Logout successfully' };
+}
+
 
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.OK)

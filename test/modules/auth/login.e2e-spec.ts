@@ -19,7 +19,7 @@ describe('AuthController (e2e) | Login', () => {
       })
       .expect(200);
     expect(response.body).toEqual({
-      statusCode: 200,
+      statusCode: 200,  
       success: true,
       message: 'Success',
       data: {

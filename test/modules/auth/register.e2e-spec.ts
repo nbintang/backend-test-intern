@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec'; 
+import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
 
 describe('AuthController (e2e) | Register', () => {
   let app: INestApplication;
@@ -12,11 +12,13 @@ describe('AuthController (e2e) | Register', () => {
     await app.close();
   });
   it('POST /api/auth/register', async () => {
+    const USER_FULLNAME = `Bintang ${Date.now()}`;
+    const USER_EMAIL = `bintang${Date.now()}@example.com`;
     const response = await request(app.getHttpServer())
       .post('/api/auth/register')
       .send({
-        fullName: `Bintang ${Date.now()}`,
-        email: `bintang${Date.now()}@example.com`,
+        fullName: USER_FULLNAME,
+        email: USER_EMAIL,
         password: 'StrongPass123!',
         confirmationPassword: 'StrongPass123!',
         phoneNumber: '081234567890',
@@ -29,8 +31,8 @@ describe('AuthController (e2e) | Register', () => {
       message: 'Success',
       data: {
         id: expect.any(Number),
-        email: `bintang${Date.now()}@example.com`,
-        fullName: `Bintang ${Date.now()}`,
+        email: USER_EMAIL,
+        fullName: USER_FULLNAME,
         address: 'Jl. Melati No. 123, Jakarta',
         phoneNumber: '+6281234567890',
       },
