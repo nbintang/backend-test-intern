@@ -1,9 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import request from 'supertest';
-import { initializeTestingApp } from '../../shared/initialize-test-app';
+import request from 'supertest'; 
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../../../src/app.module';
-import cookieParser from 'cookie-parser';
+import { AppModule } from '../src/app.module'; 
 
 describe('Auth Token E2E', () => {
   let app: INestApplication;
