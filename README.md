@@ -22,78 +22,241 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# **CRUD Toko Online**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Deskripsi singkat
+
+Aplikasi backend toko online berbasis NestJS yang mendukung manajemen produk, pesanan (order), dan merchant.
+Sistem ini menggunakan Prisma ORM untuk koneksi ke PostgreSQL, dilengkapi autentikasi JWT, serta E2E testing dengan Jest dan Supertest.
 
 ## Project setup
-
+## 1. Install Dependencies
+Pastikan semua dependency sudah terinstal:
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+## 2. Database Setup
+Project ini menggunakan Prisma ORM dengan PostgreSQL. Buka file `.env` dan pastikan environment variable sudah berisi:
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/NAMA_DATABASE?schema=public"
 ```
 
-## Run tests
-
+## 3. Generate Prisma Client & Migrate Database
+Jalankan perintah berikut untuk membuat skema database dan generate Prisma client:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx prisma migrate dev --name init
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+Untuk memastikan client Prisma siap digunakan:
 ```bash
-$ npm install -g mau
-$ mau deploy
+npx prisma generate
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 4. Seed Data Awal
+Project ini sudah menyediakan file seed untuk menambahkan data awal (seperti akun merchant contoh). Jalankan:
+```bash
+npx prisma db seed
+```
 
-## Resources
+**Data merchant default yang ditambahkan:**
+- Email: `merchant@example.com`
+- Password: `password123`
 
-Check out a few resources that may come in handy when working with NestJS:
+## 5. Menjalankan Server
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Mode development:
+```bash
+npm run start:dev
+```
 
-## Support
+### Mode production (setelah build):
+```bash
+npm run build
+npm run start:prod
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Server akan berjalan di:
+```
+http://localhost:3000/api
+```
 
-## Stay in touch
+## 6. Login & Token Authentication
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Gunakan endpoint login untuk mendapatkan access token:
+```http
+POST /api/auth/login
+```
 
-## License
+**Body:**
+```json
+{
+  "email": "merchant@example.com",
+  "password": "password123"
+}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+**Response sukses:**
+```json
+{
+  "data": {
+    "accessToken": "jwt-token-anda",
+    "refreshToken": "jwt-refresh-token"
+  }
+}
+```
+
+Gunakan `accessToken` ini untuk mengakses route yang dilindungi:
+```http
+Authorization: Bearer <accessToken>
+```
+
+## 7. Menjalankan Test
+
+
+### E2E Test
+```bash
+npm run test:e2e
+```
+
+### Test E2E Modules atau aplikasi 
+```bash
+npm run test:modules
+```
+
+### Test Token Saja
+```bash
+npm run test:token
+```
+
+## 📂 Struktur Folder Utama
+```
+.
+└── src/
+    ├── common/
+    │   ├── app/
+    │   │   ├── dto
+    │   │   ├── exceptions
+    │   │   ├── interceptors
+    │   │   ├── interfaces
+    │   │   ├── pipes
+    │   │   ├── validators
+    │   │   └── ...others
+    │   ├── logger
+    │   ├── prisma
+    │   └── ...others
+    ├── config/
+    │   ├── app/
+    │   │   ├── app.config.module.ts
+    │   │   ├── app.config.schema.ts
+    │   │   ├── app.config.service.ts
+    │   │   └── app.config.ts
+    │   ├── auth/
+    │   │   ├── auth.config.module.ts
+    │   │   ├── auth.config.schema.ts
+    │   │   ├── auth.config.service.ts
+    │   │   └── auth.config.ts
+    │   └── ...others
+    ├── modules/
+    │   ├── auth/
+    │   │   ├── controllers/
+    │   │   │   ├── auth.controller.ts
+    │   │   │   └── ...others
+    │   │   ├── dto/
+    │   │   │   ├── login.dto.ts
+    │   │   │   ├── register.dto.ts
+    │   │   │   └── ...others
+    │   │   ├── guards/
+    │   │   │   ├── access-token.guard.ts
+    │   │   │   ├── refresh-token.guard.ts
+    │   │   │   └── ...others
+    │   │   ├── interfaces/
+    │   │   │   ├── user-jwt-payload.interface.ts
+    │   │   │   └── ...others
+    │   │   ├── services/
+    │   │   │   ├── auth.service.ts
+    │   │   │   └── ...others
+    │   │   ├── strategies/
+    │   │   │   ├── access-token.strategy.ts
+    │   │   │   ├── refresh-token.strategy.ts
+    │   │   │   └── ...others
+    │   │   └── auth.module.ts
+    │   ├── categories/
+    │   │   ├── controllers
+    │   │   ├── dto/
+    │   │   │   ├── requests
+    │   │   │   └── responses
+    │   │   ├── services
+    │   │   ├── ...others
+    │   │   └── categories.module.ts
+    │   ├── merchant/
+    │   │   ├── controllers
+    │   │   ├── dto/
+    │   │   │   ├── requests
+    │   │   │   └── responses
+    │   │   ├── interfaces
+    │   │   ├── services
+    │   │   ├── ...others
+    │   │   └── merchant.module.ts
+    │   ├── order/
+    │   │   ├── controllers
+    │   │   ├── dto/
+    │   │   │   ├── requests
+    │   │   │   └── responses
+    │   │   ├── services
+    │   │   ├── ...others
+    │   │   └── order.module.ts
+    │   └── product/
+    │       ├── controllers
+    │       ├── dto/
+    │       │   ├── requests
+    │       │   └── responses
+    │       ├── services
+    │       ├── ...others
+    │       └── product.module.ts
+    ├── app.controller.spec.ts
+    ├── app.controller.ts
+    ├── app.module.ts
+    ├── app.service.ts
+    └── main.ts
+```
+
+## **Alasan Pemilihan pattern tersebut**
+
+NestJS merupakan salah satu framework JS yang un-opinionated, great typescript support, dan sangat mature untuk pembuatan aplikasi menengah ke atas, serta mendukung modular structure. Berikut alasan pemilihan saya terhadap pattern tersebut:
+
+### 1. Modular Architecture Pattern
+Setiap modul bisnis (auth, product, order, merchant, categories) dipisahkan menjadi module independen dengan komponen-komponennya sendiri (controllers, services, dto, guards, dll). Pattern ini memungkinkan:
+- **Isolasi fitur**: Perubahan pada satu modul tidak mempengaruhi modul lain
+- **Parallel development**: Tim dapat bekerja pada modul berbeda secara bersamaan
+- **Reusability**: Modul dapat di-reuse atau di-extract menjadi microservice jika diperlukan
+
+### 2. Layered Architecture Pattern
+Pemisahan layer berdasarkan responsibility:
+- **`common/`**: Shared utilities, helpers, dan komponen yang digunakan lintas modul (interceptors, pipes, validators, exception handlers)
+- **`config/`**: Centralized configuration management untuk environment variables
+- **`modules/`**: Business logic layer yang berisi domain-specific logic
+
+Pattern ini menjaga **Single Responsibility Principle** dan memudahkan testing karena setiap layer memiliki tanggung jawab yang jelas.
+
+### 3. Request-Response Pattern dengan DTO Separation
+Pemisahan DTO menjadi `requests/` dan `responses/` memberikan kejelasan:
+- **Input validation**: DTO request fokus pada validasi data masuk
+- **Output formatting**: DTO response fokus pada struktur data yang dikirim ke client
+- **API contract clarity**: Developer langsung memahami struktur request dan response setiap endpoint
+
+### 4. Configuration as Code Pattern
+Setiap konfigurasi (app, auth, database) dikelola dengan struktur yang konsisten:
+- **Schema validation**: Memastikan environment variables valid saat startup
+- **Type-safe config**: Konfigurasi dapat diakses dengan type safety
+- **Centralized management**: Mudah untuk update atau menambah konfigurasi baru
+
+### 5. Maintainability & Scalability
+Pattern ini dipilih dengan mempertimbangkan:
+- **Onboarding**: Developer baru dapat cepat memahami struktur project karena konsisten dan predictable
+- **Debugging**: Mudah menemukan bug karena setiap komponen memiliki lokasi yang jelas
+- **Testing**: Setiap layer dapat ditest secara independen (unit test, integration test, e2e test)
+- **Growth**: Mudah menambah fitur baru atau melakukan refactoring tanpa risiko breaking changes
+
+### 6. Industry Best Practices
+Pattern ini mengadopsi standar industri yang digunakan oleh perusahaan-perusahaan teknologi besar, sehingga memastikan kode yang dihasilkan professional dan mudah di-maintain dalam jangka panjang.
