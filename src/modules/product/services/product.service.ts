@@ -6,15 +6,20 @@ import { QueryProductDto } from '../dto/requests/query-product.dto';
 import { Prisma, Product } from '@prisma/client';
 import { ServerPaginatedResponseDto } from '../../../common/app/dto/server-response.dto';
 import { ProductResponse } from '../interfaces/product-response.interface';
+import { CategoriesService } from '../../categories/services/categories.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly categoriesService: CategoriesService,
+  ) {}
 
   async createProduct(
     merchantId: number,
     dto: CreateProductDto,
   ): Promise<ProductResponse> {
+    await this.categoriesService.findCategoryById(dto.categoryId);
     const product = await this.prisma.product.create({
       data: {
         merchantId,
@@ -76,11 +81,13 @@ export class ProductService {
 
   async updateProductById(
     id: number,
-    updateProductDto: UpdateProductDto,
+    dto: UpdateProductDto,
   ): Promise<ProductResponse> {
+    const existingProduct = await this.findProductById(id);
+    await this.categoriesService.findCategoryById(dto.categoryId);
     const product = await this.prisma.product.update({
-      where: { id },
-      data: updateProductDto,
+      where: { id: existingProduct.id },
+      data: dto,
       include: {
         category: true,
       },
@@ -89,8 +96,9 @@ export class ProductService {
   }
 
   async deleteProductById(id: number) {
+    const product = await this.findProductById(id);
     await this.prisma.product.delete({
-      where: { id },
+      where: { id: product.id },
     });
     return {
       message: 'Product deleted successfully',

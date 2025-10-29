@@ -1,25 +1,28 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { initializeTestingApp } from '../../shared/initialize-test-app'; 
 
 describe('AuthController (e2e) | Login', () => {
   let app: INestApplication;
+ 
   beforeAll(async () => {
     app = await initializeTestingApp();
+
   });
   afterAll(async () => {
     await app.close();
   });
   it('POST /api/auth/login | Success', async () => {
+    const PAYLOAD = {
+      email: 'merchant@example.com',
+      password: 'password123',
+    };
     const response = await request(app.getHttpServer())
       .post('/api/auth/login')
-      .send({
-        email: 'merchant@example.com',
-        password: 'password123',
-      })
+      .send(PAYLOAD)
       .expect(200);
     expect(response.body).toEqual({
-      statusCode: 200,  
+      statusCode: 200,
       success: true,
       message: 'Success',
       data: {

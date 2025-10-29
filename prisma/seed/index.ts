@@ -35,13 +35,13 @@ async function main() {
 
   // 2) Categories
   const coffeeCat = await prisma.category.create({
-    data: { name: 'Americano' },
+    data: { name: 'Makanan' },
   });
   const coffeeCat2 = await prisma.category.create({
-    data: { name: 'Expresso' },
+    data: { name: 'Minuman' },
   });
   const coffeeCat3 = await prisma.category.create({
-    data: { name: 'Latte' },
+    data: { name: 'Kopi' },
   });
 
   console.log(
@@ -50,42 +50,42 @@ async function main() {
   );
 
   // 3) Products (assign categoryId)
-  const coffee1 = await prisma.product.create({
+  const product1 = await prisma.product.create({
     data: {
       merchantId: merchant.id,
       name: 'Americano Coffee',
       description: 'Americano coffee with milk',
       price: 15000000,
       stock: 10,
+      categoryId: coffeeCat3.id,
+    },
+  });
+
+  const product2 = await prisma.product.create({
+    data: {
+      merchantId: merchant.id,
+      name: 'Chitato',
+      description: 'Chitato snack with cheese',
+      price: 1300000,
+      stock: 20,
       categoryId: coffeeCat.id,
     },
   });
 
-  const coffee2 = await prisma.product.create({
+  const product3 = await prisma.product.create({
     data: {
       merchantId: merchant.id,
-      name: 'Expresso Coffee',
-      description: 'Expresso coffee with milk',
-      price: 1300000,
-      stock: 20,
-      categoryId: coffeeCat2.id,
-    },
-  });
-
-  const coffee3 = await prisma.product.create({
-    data: {
-      merchantId: merchant.id,
-      name: 'Latte Coffee',
-      description: 'Latte coffee with milk',
+      name: 'Ice Matcha',
+      description: 'Ice Matcha with milk',
       price: 1500000,
       stock: 15,
-      categoryId: coffeeCat3.id,
+      categoryId: coffeeCat2.id,
     },
   });
 
   console.log(
     '✅ Created products:',
-    [coffee1.name, coffee2.name, coffee3.name].join(', '),
+    [product1.name, product2.name, product3.name].join(', '),
   );
 
   // 4) Orders (userId & productId must exist)
@@ -93,9 +93,9 @@ async function main() {
     data: {
       customerName: 'John Doe',
       merchantId: merchant.id,
-      productId: coffee1.id,
+      productId: product1.id,
       quantity: 1,
-      totalAmount: coffee1.price * 1,
+      totalAmount: product1.price * 1,
       status: OrderStatus.PENDING,
     },
   });
@@ -104,9 +104,9 @@ async function main() {
     data: {
       customerName: 'John Doe',
       merchantId: merchant.id,
-      productId: coffee2.id,
+      productId: product2.id,
       quantity: 2,
-      totalAmount: coffee2.price * 2,
+      totalAmount: product2.price * 2,
       status: OrderStatus.COMPLETED,
     },
   });
@@ -115,9 +115,9 @@ async function main() {
     data: {
       customerName: 'John Doe',
       merchantId: merchant.id,
-      productId: coffee3.id,
+      productId: product3.id,
       quantity: 1,
-      totalAmount: coffee3.price * 1,
+      totalAmount: product3.price * 1,
       status: OrderStatus.PENDING,
     },
   });

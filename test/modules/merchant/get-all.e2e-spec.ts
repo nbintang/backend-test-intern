@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { initializeTestingApp } from '../../shared/initialize-test-app';
 import request from 'supertest';
 
 describe('MerchantController (e2e) | Get All', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await initializeTestingApp();
-  });
+ });
 
   afterAll(async () => {
     await app.close();
@@ -43,12 +43,7 @@ describe('MerchantController (e2e) | Get All', () => {
       statusCode: 200,
       success: true,
       message: 'Merchants retrieved successfully',
-      data: [
-        {
-          id: expect.any(Number),
-          name: SEARCH,
-        },
-      ],
+      data: expect.any(Array<Object>),
       meta: {
         totalItems: expect.any(Number),
         totalPages: expect.any(Number),

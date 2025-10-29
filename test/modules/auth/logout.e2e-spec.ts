@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { initializeTestingApp } from '../../shared/initialize-test-app';
 
 describe('AuthController (e2e) | Logout', () => {
   let app: INestApplication;

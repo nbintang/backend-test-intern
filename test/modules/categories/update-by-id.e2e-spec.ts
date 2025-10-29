@@ -1,13 +1,13 @@
-import { INestApplication } from '@nestjs/common';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { INestApplication } from '@nestjs/common'; 
+import { initializeTestingApp } from '../../shared/initialize-test-app';
 import request from 'supertest';
 
 describe('CategoriesController (e2e) | Update By ID', () => { 
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await initializeTestingApp();
-  });
+ });
 
   afterAll(async () => {
     await app.close();
@@ -15,7 +15,7 @@ describe('CategoriesController (e2e) | Update By ID', () => {
 
   it('PATCH /api/protected/categories/:id | Should update or handle error', async () => { 
     const CATEGORY_NAME = `Category-${Date.now()}`;
-    const CATEGORY_ID = 9;
+    const CATEGORY_ID = 2;
 
     const response = await request(app.getHttpServer())
       .patch(`/api/protected/categories/${CATEGORY_ID}`)

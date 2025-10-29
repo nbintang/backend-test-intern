@@ -88,29 +88,41 @@ export class OrderService {
     return order;
   }
 
-  async updateOrderById(id: number, dto: UpdateOrderDto) {
+  async updateOrderById(id: number, dto: UpdateOrderDto): Promise<OrderResponse> {
     const { status, ...rest } = dto;
-    const product = await this.productService.findProductById(rest.productId);
-    if (product.stock < rest.quantity) {
+    const order = await this.findOrderById(id);
+    if (!order) throw new NotFoundException('Order not found');
+    const quantity = rest.quantity ?? order.quantity;
+    const product = await this.productService.findProductById(
+      rest.productId ?? order.productId,
+    );
+
+    if (product.stock < quantity) {
       throw new BadRequestException('Insufficient product stock');
     }
-    const totalAmount = product.price * rest.quantity;
-    await this.productService.updateProductById(rest.productId, {
-      stock: product.stock - rest.quantity,
+
+    const totalAmount = product.price * quantity;
+
+    await this.productService.updateProductById(product.id, {
+      stock: product.stock - quantity,
     });
+
     const updatedOrder = await this.prisma.order.update({
       where: { id },
       data: {
         totalAmount,
-        status: status ?? OrderStatus.PENDING,
-        ...rest,
+        status: status ?? order.status,
+        quantity,
+        productId: product.id,
+        customerName: rest.customerName ?? order.customerName,
       },
       include: { product: { include: { category: true } }, merchant: true },
     });
+
     return updatedOrder;
   }
 
-  async deleteOrderById(id: number) {
+  async deleteOrderById(id: number): Promise<{ message: string }> {
     await this.prisma.order.delete({
       where: { id },
     });

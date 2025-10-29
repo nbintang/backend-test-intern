@@ -8,9 +8,19 @@ import { AppModule } from '../../src/app.module';
 import { AccessTokenGuard } from '../../src/modules/auth/guards/access-token.guard';
 
 export async function initializeTestingApp(): Promise<INestApplication> {
+  const MERCHANT_ID = 1;
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
-  }) .compile();
+  })
+    .overrideGuard(AccessTokenGuard)
+    .useValue({
+      canActivate: (context) => {
+        const req = context.switchToHttp().getRequest();
+        req.user = { id: MERCHANT_ID };
+        return true;
+      },
+    })
+    .compile();
 
   const app = moduleFixture.createNestApplication();
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);

@@ -1,20 +1,19 @@
 import { INestApplication } from '@nestjs/common';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { initializeTestingApp } from '../../shared/initialize-test-app';
 import request from 'supertest';
 
 describe('CategoriesController (e2e) | Get By ID', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await initializeTestingApp();
-  });
-
+ });
   afterAll(async () => {
     await app.close();
   });
 
   it('GET /api/protected/categories/:id | Should return category or handle error', async () => {
-    const PARAMS = 5;
+    const PARAMS = 2;
 
     const response = await request(app.getHttpServer())
       .get(`/api/protected/categories/${PARAMS}`);

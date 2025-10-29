@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { initializeTestingApp } from '../../shared/initialize-test-app';
 import request from 'supertest';
 
 describe('CategoriesController (e2e) | Create', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await initializeTestingApp();
-  });
+ });
 
   afterAll(async () => {
     await app.close();
@@ -33,14 +33,13 @@ describe('CategoriesController (e2e) | Create', () => {
   });
 
   it('POST /api/protected/categories | Should return conflict when duplicate', async () => {
-
     const DUPLICATE_NAME = `Category-Duplicate`;
 
     await request(app.getHttpServer())
       .post('/api/protected/categories')
       .send({ name: DUPLICATE_NAME })
       .expect(201);
- 
+
     const response = await request(app.getHttpServer())
       .post('/api/protected/categories')
       .send({ name: DUPLICATE_NAME })

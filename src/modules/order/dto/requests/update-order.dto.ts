@@ -6,13 +6,14 @@ import {
   IsOptional,
   MinLength,
   MaxLength,
+  IsNotEmpty,
 } from 'class-validator';
 import { OrderStatus } from '../../enums/order-status.enum';
 import { Transform } from 'class-transformer';
 
 export class UpdateOrderDto {
   @IsInt()
-  @IsOptional()
+  @IsNotEmpty({ message: 'Product Id is required' })
   productId?: number;
 
   @IsInt()

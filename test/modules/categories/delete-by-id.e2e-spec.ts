@@ -1,20 +1,20 @@
 import { INestApplication } from '@nestjs/common';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { initializeTestingApp } from '../../shared/initialize-test-app';
 import request from 'supertest';
 
 describe('CategoriesController (e2e) | Delete By ID', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await initializeTestingApp();
-  });
+ });
 
   afterAll(async () => {
     await app.close();
   });
 
   it('DELETE /api/protected/categories/:id | Should delete or handle errors', async () => {
-    const PARAM = 9;
+    const PARAM = 3;
 
     const response = await request(app.getHttpServer())
       .delete(`/api/protected/categories/${PARAM}`);

@@ -61,7 +61,7 @@ model Order {
   merchant    Merchant    @relation(fields: [merchantId], references: [id])
   merchantId  Int         @map("merchant_id")
 
-  product      Product @relation(fields: [productId], references: [id])
+  product      Product @relation(fields: [productId], references: [id],  onDelete: Cascade)
   productId    Int     @map("product_id")
   customerName String  @map("customer_name")
 

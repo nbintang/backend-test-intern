@@ -1,23 +1,12 @@
 import { INestApplication } from '@nestjs/common';
-import { initializeTestingApp } from '../../shared/initialize.e2e-spec';
+import { initializeTestingApp } from '../../shared/initialize-test-app';
 import request from 'supertest';
 
 describe('CategoriesController (e2e) | Get All', () => {
   let app: INestApplication;
-  let accessToken: string;
-
   beforeAll(async () => {
     app = await initializeTestingApp();
-
-    // Login untuk mendapatkan token (pastikan user dummy ada di DB)
-    const loginRes = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({
-        email: 'merchant@example.com',
-        password: 'password123',
-      });
-    accessToken = loginRes.body?.data?.accessToken;
-  });
+ });
 
   afterAll(async () => {
     await app.close();
@@ -26,7 +15,6 @@ describe('CategoriesController (e2e) | Get All', () => {
   it('GET /api/protected/categories | Should return all categories', async () => {
     const response = await request(app.getHttpServer())
       .get('/api/protected/categories')
-      .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
 
     expect(response.body).toEqual({
@@ -52,9 +40,7 @@ describe('CategoriesController (e2e) | Get All', () => {
       .get(
         `/api/protected/categories?limit=${LIMIT}&page=${PAGE}&search=${SEARCH}`,
       )
-      .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
-
     expect(response.body).toEqual({
       statusCode: 200,
       success: true,
