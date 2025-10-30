@@ -24,7 +24,7 @@
 
 # **CRUD Toko Online**
 
-[View API Documentation on Postman](https://documenter.getpostman.com/view/36188038/2sB3Wnw21t)
+[View API Documentation on Postman](https://documenter.getpostman.com/view/27397463/2sB3Wnw26C)
 
 ## Deskripsi singkat
 
