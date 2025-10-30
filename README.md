@@ -295,6 +295,4 @@ Pattern ini mengadopsi standar industri yang digunakan oleh perusahaan-perusahaa
 
 # Postman Documentation
 
-```bash
-https://documenter.getpostman.com/view/36188038/2sB3Wnw21t
-```
+[View API Documentation on Postman](https://documenter.getpostman.com/view/36188038/2sB3Wnw21t)
