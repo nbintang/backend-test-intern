@@ -1,9 +1,11 @@
 import { Transform } from 'class-transformer';
-import { IsOptional, IsPhoneNumber, IsString, Matches } from 'class-validator';
+import { IsOptional, IsPhoneNumber, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateMerchantDto {
   @IsString()
   @IsOptional()
+  @MinLength(3, { message: 'Full name must be at least 3 characters long' })
+  @MaxLength(50, { message: 'Full name must be at most 50 characters long' })
   @Transform(({ value }) => value.trim())
   fullName?: string;
 

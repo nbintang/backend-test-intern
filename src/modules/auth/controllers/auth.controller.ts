@@ -71,6 +71,8 @@ async logout(@Res({ passthrough: true }) response: Response): Promise<ServerResp
     @Req() request: Request,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const merchantId = request.user.id;
+    console.log(merchantId);
+    
     return await this.authService.refreshToken(merchantId);
   }
 }

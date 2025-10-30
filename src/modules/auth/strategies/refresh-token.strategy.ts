@@ -15,6 +15,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           let token = null;
+          console.log(request.cookies);
           if (request && request.cookies) {
             token = request.cookies['refreshToken'];
           }
@@ -22,10 +23,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
         },
       ]),
       passReqToCallback: true,
-      secretOrKey: authConfigService.accessSecret,
+      secretOrKey: authConfigService.refreshSecret,
     });
   }
   async validate(request: Request, payload: MerchantJwtPayload) {
+    console.log(payload);
+    
     const refreshToken = request.cookies['refreshToken'];
     return { ...payload, refreshToken };
   }
