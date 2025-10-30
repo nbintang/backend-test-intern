@@ -24,6 +24,8 @@
 
 # **CRUD Toko Online**
 
+[View API Documentation on Postman](https://documenter.getpostman.com/view/36188038/2sB3Wnw21t)
+
 ## Deskripsi singkat
 
 Aplikasi backend toko online berbasis NestJS yang mendukung manajemen produk, pesanan (order), dan merchant.
@@ -292,7 +294,4 @@ Pattern ini dipilih dengan mempertimbangkan:
 ### 6. Industry Best Practices
 
 Pattern ini mengadopsi standar industri yang digunakan oleh perusahaan-perusahaan teknologi besar, sehingga memastikan kode yang dihasilkan professional dan mudah di-maintain dalam jangka panjang.
-
-# Postman Documentation
-
-[View API Documentation on Postman](https://documenter.getpostman.com/view/36188038/2sB3Wnw21t)
+ 
