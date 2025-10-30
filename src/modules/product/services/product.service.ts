@@ -84,7 +84,9 @@ export class ProductService {
     dto: UpdateProductDto,
   ): Promise<ProductResponse> {
     const existingProduct = await this.findProductById(id);
-    await this.categoriesService.findCategoryById(dto.categoryId);
+    if (dto.categoryId) {
+      await this.categoriesService.findCategoryById(dto.categoryId);
+    }
     const product = await this.prisma.product.update({
       where: { id: existingProduct.id },
       data: dto,
