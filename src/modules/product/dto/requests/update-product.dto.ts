@@ -34,7 +34,7 @@ export class UpdateProductDto {
   stock?: number;
 
   @IsNumber({}, { message: 'Category Id must be a number' })
-  @IsOptional()
+  @IsNotEmpty()
   @Min(0, { message: 'Category Id must be at least 0' })
   categoryId?: number;
 }

@@ -34,19 +34,19 @@ async function main() {
   console.log('✅ Created users:', [merchant.email].join(', '));
 
   // 2) Categories
-  const coffeeCat = await prisma.category.create({
+  const cat = await prisma.category.create({
     data: { name: 'Makanan' },
   });
-  const coffeeCat2 = await prisma.category.create({
+  const cat2 = await prisma.category.create({
     data: { name: 'Minuman' },
   });
-  const coffeeCat3 = await prisma.category.create({
+  const cat3 = await prisma.category.create({
     data: { name: 'Kopi' },
   });
 
   console.log(
     '✅ Created categories:',
-    [coffeeCat.name, coffeeCat2.name, coffeeCat3.name].join(', '),
+    [cat.name, cat2.name, cat3.name].join(', '),
   );
 
   // 3) Products (assign categoryId)
@@ -57,7 +57,7 @@ async function main() {
       description: 'Americano coffee with milk',
       price: 15000000,
       stock: 10,
-      categoryId: coffeeCat3.id,
+      categoryId: cat3.id,
     },
   });
 
@@ -68,7 +68,7 @@ async function main() {
       description: 'Chitato snack with cheese',
       price: 1300000,
       stock: 20,
-      categoryId: coffeeCat.id,
+      categoryId: cat.id,
     },
   });
 
@@ -79,7 +79,7 @@ async function main() {
       description: 'Ice Matcha with milk',
       price: 1500000,
       stock: 15,
-      categoryId: coffeeCat2.id,
+      categoryId: cat2.id,
     },
   });
 

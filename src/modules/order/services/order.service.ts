@@ -123,8 +123,9 @@ export class OrderService {
   }
 
   async deleteOrderById(id: number): Promise<{ message: string }> {
+    const order = await this.findOrderById(id);
     await this.prisma.order.delete({
-      where: { id },
+      where: { id: order.id },
     });
     return {
       message: 'Order deleted successfully',

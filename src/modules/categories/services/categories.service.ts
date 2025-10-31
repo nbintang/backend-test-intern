@@ -64,6 +64,7 @@ export class CategoriesService {
     id: number,
     dto: UpdateCategoryDto,
   ): Promise<Category> {
+    await this.findCategoryById(id);
     const existingCategory = await this.findExistingCategory(dto.name);
     if (existingCategory)
       throw new ConflictException(`Category ${dto.name} already exists`);
