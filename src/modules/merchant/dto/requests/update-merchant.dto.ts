@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer';
-import { IsOptional, IsPhoneNumber, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class UpdateMerchantDto {
   @IsString()

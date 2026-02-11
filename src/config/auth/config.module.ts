@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import authConfig from './auth.config';
-import { authConfigSchema } from './auth.config.schema';
-import { AuthConfigService } from './auth.config.service';
+import authConfig from './config';
+import { authConfigSchema } from './config.schema';
+import { AuthConfigService } from './config.service';
 
 @Module({
   imports: [

@@ -7,7 +7,7 @@ import { AccessTokenGuard } from './guards/access-token.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { MerchantModule } from '../merchant/merchant.module';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthConfigModule } from '../../config/auth/auth.config.module';
+import { AuthConfigModule } from '../../config/auth/config.module';
 
 @Module({
   imports: [AuthConfigModule, MerchantModule, JwtModule.register({})],
